@@ -8,6 +8,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,6 +31,13 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+
+        List<Trabajo> listaTrabajos = new ArrayList<>(Arrays.asList(Trabajo.TRABAJOS_MOCK));
+
+        ListView lvOfertasTrabajo = (ListView) findViewById(R.id.lvOfertasTrabajo);
+
+        OfertasListAdapter ofertasListAdapter = new OfertasListAdapter(this, listaTrabajos);
+        lvOfertasTrabajo.setAdapter(ofertasListAdapter);
     }
 
     @Override
