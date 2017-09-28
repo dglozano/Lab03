@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">Lab03</string>
     <string name="action_settings">Settings</string>
+    <string name="hora">Horas:</string>
+    <string name="max_pago_hora" >Max $/Hora:</string>
+    <string name="fecha_fin">Fecha fin:</string>
+    <string name="en_ingles">En inglés</string>
 </resources>
