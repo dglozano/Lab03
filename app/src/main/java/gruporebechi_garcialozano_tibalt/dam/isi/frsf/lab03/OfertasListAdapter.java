@@ -9,6 +9,9 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
@@ -25,6 +28,9 @@ public class OfertasListAdapter extends BaseAdapter {
         inflater = LayoutInflater.from(applicationContext);
         this.listaTrabajos = listaTrabajos;
     }
+
+    private SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/mm/yyyy");
+    private NumberFormat formatoNumero = new DecimalFormat("#0.00");
 
     @Override
     public int getCount() {
@@ -53,11 +59,11 @@ public class OfertasListAdapter extends BaseAdapter {
 
         Trabajo ofertaTrabajo = (Trabajo) getItem(position);
 
-        holder.posicionTextView.setText(ofertaTrabajo.getCategoria().toString());
+        holder.posicionTextView.setText(ofertaTrabajo.getCategoria().getDescripcion());
         holder.tituloOfertaTextView.setText(ofertaTrabajo.getDescripcion().toString());
         holder.horasTextView.setText(ofertaTrabajo.getHorasPresupuestadas().toString());
-        holder.maxPesoHoraTextView.setText(ofertaTrabajo.getPrecioMaximoHora().toString());
-        holder.fechaFinTextView.setText(ofertaTrabajo.getFechaEntrega().toString());
+        holder.maxPesoHoraTextView.setText(formatoNumero.format(ofertaTrabajo.getPrecioMaximoHora()));
+        holder.fechaFinTextView.setText(formatoFecha.format(ofertaTrabajo.getFechaEntrega()));
         holder.enInglesCheckBox.setChecked(ofertaTrabajo.getRequiereIngles());
 
         switch (ofertaTrabajo.getMonedaPago()){
