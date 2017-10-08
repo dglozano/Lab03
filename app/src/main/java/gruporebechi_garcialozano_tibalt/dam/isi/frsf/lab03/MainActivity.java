@@ -5,10 +5,14 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.ContextMenu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
 
         ListView lvOfertasTrabajo = (ListView) findViewById(R.id.lvOfertasTrabajo);
 
+        registerForContextMenu(lvOfertasTrabajo);
+
         OfertasListAdapter ofertasListAdapter = new OfertasListAdapter(this, listaTrabajos);
         lvOfertasTrabajo.setAdapter(ofertasListAdapter);
     }
@@ -60,5 +66,28 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v,
+                                    ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.context_menu, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        switch (item.getItemId()) {
+            case R.id.opPostOferta:
+                Toast.makeText(this, "Te postulaste a esta oferta", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.OpDescOferta:
+                Toast.makeText(this, "Descartaste esta oferta", Toast.LENGTH_SHORT).show();
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
     }
 }
