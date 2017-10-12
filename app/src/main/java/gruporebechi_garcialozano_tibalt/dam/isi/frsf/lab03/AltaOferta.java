@@ -4,7 +4,11 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
+
+import java.util.Arrays;
 
 public class AltaOferta extends AppCompatActivity {
 
@@ -21,6 +25,12 @@ public class AltaOferta extends AppCompatActivity {
 
         Button cancelarBtn = (Button) findViewById(R.id.btnCancelar);
         Button guardarBtn = (Button) findViewById(R.id.btnGuardar);
+        Spinner categoriasSpinner = (Spinner) findViewById(R.id.spinnerCategoria);
+        categoriasSpinner.setAdapter(new ArrayAdapter(this, android.R.layout.simple_spinner_item, Categoria.CATEGORIAS_MOCK));
+        Spinner monedaSpinner = (Spinner) findViewById(R.id.spinnerMoneda);
+        ArrayAdapter<CharSequence> spinnerMonedaAdapter = ArrayAdapter.createFromResource(this,
+                R.array.monedas, android.R.layout.simple_spinner_item);
+        monedaSpinner.setAdapter(spinnerMonedaAdapter);
         guardarBtn.setOnClickListener(new GuardarBtnListener());
         cancelarBtn.setOnClickListener(new CancelarBtnListener());
     }

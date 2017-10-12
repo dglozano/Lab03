@@ -12,7 +12,7 @@
     <string name="categoria">Categoria</string>
     <string name="horas_de_trabajo">Horas de trabajo</string>
     <string name="ingrese_horas_de_trabajo">Ingrese las horas de trabajo estimadas</string>
-    <string name="precio_max_hora">Ingrese precio máximo por hora</string>
+    <string name="precio_max_hora">Ingrese precio por hora</string>
     <string name="requiere_ingles">¿Requiere inglés?</string>
     <string name="fecha_max_entrega">Fecha máx. de entrega</string>
     <string name="ingrese_fecha_maxima">Ingrese fecha máx. de entrega</string>
