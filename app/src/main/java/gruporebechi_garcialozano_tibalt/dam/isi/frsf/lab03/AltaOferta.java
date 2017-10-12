@@ -1,5 +1,6 @@
 package gruporebechi_garcialozano_tibalt.dam.isi.frsf.lab03;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -7,10 +8,12 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-import java.util.Arrays;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 public class AltaOferta extends AppCompatActivity {
 
@@ -28,6 +31,7 @@ public class AltaOferta extends AppCompatActivity {
     private Button guardarBtn;
     private Spinner categoriasSpinner;
     private Spinner monedaSpinner;
+    private Calendar myCalendar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,15 +39,37 @@ public class AltaOferta extends AppCompatActivity {
         setContentView(R.layout.activity_alta_oferta);
 
         intentOrigen = getIntent();
+        myCalendar = Calendar.getInstance();
 
         findViewsById();
         setAdapters();
         setListeners();
     }
 
+    private class DatePickerListener implements DatePickerDialog.OnDateSetListener {
+        @Override
+        public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+            myCalendar.set(Calendar.YEAR, year);
+            myCalendar.set(Calendar.MONTH, month);
+            myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            fechaEntregaEditText.setText(sdf.format(myCalendar.getTime()));
+        }
+    }
+
     private void setListeners() {
         guardarBtn.setOnClickListener(new GuardarBtnListener());
         cancelarBtn.setOnClickListener(new CancelarBtnListener());
+        fechaEntregaEditText.setOnFocusChangeListener(new FechaOnFocusChangeListener());
+        fechaEntregaEditText.setOnClickListener(new FechaOnClickListener());
+    }
+
+    private void showCalendarPopUp() {
+        new DatePickerDialog(AltaOferta.this, new DatePickerListener(),
+                myCalendar.get(Calendar.YEAR),
+                myCalendar.get(Calendar.MONTH),
+                myCalendar.get(Calendar.DAY_OF_MONTH)).show();
     }
 
     private void setAdapters() {
@@ -103,7 +129,21 @@ public class AltaOferta extends AppCompatActivity {
         monedaSpinner.setSelection(savedInstanceState.getInt("moneda"));
         requiereInglesCheckBox.setChecked(savedInstanceState.getBoolean("requiere-ingles"));
         fechaEntregaEditText.setText(savedInstanceState.getString("fecha-estimada"));
+    }
 
-        nombreOfertaEditText.requestFocus();
+    private class FechaOnFocusChangeListener implements View.OnFocusChangeListener {
+        @Override
+        public void onFocusChange(View v, boolean hasFocus) {
+            if(hasFocus){
+                showCalendarPopUp();
+            }
+        }
+    }
+
+    private class FechaOnClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            showCalendarPopUp();
+        }
     }
 }
