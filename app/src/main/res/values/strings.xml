@@ -2,9 +2,20 @@
     <string name="app_name">Lab03</string>
     <string name="action_settings">Settings</string>
     <string name="hora">Horas:</string>
-    <string name="max_pago_hora" >Max $/Hora:</string>
+    <string name="max_pago_hora">Max $/Hora:</string>
     <string name="fecha_fin">Fecha fin:</string>
     <string name="en_ingles">En inglés</string>
     <string name="postular">Postularse a esta oferta</string>
     <string name="descartar">Descartar esta oferta</string>
+    <string name="nombre_oferta">Nombre oferta</string>
+    <string name="ingrese_nombre_oferta">Ingrese el nombre de la oferta</string>
+    <string name="categoria">Categoria</string>
+    <string name="horas_de_trabajo">Horas de trabajo</string>
+    <string name="ingrese_horas_de_trabajo">Ingrese las horas de trabajo estimadas</string>
+    <string name="precio_max_hora">Ingrese precio máximo por hora</string>
+    <string name="requiere_ingles">¿Requiere inglés?</string>
+    <string name="fecha_max_entrega">Fecha máx. de entrega</string>
+    <string name="ingrese_fecha_maxima">Ingrese fecha máx. de entrega</string>
+    <string name="guardar">Guardar</string>
+    <string name="cancelar">Cancelar</string>
 </resources>

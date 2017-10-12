@@ -1,5 +1,6 @@
 package gruporebechi_garcialozano_tibalt.dam.isi.frsf.lab03;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -31,8 +32,8 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Intent intent = new Intent(MainActivity.this, AltaOferta.class);
+                startActivityForResult(intent, AltaOferta.ALTA_OFERTA_REQUEST);
             }
         });
 
@@ -80,14 +81,25 @@ public class MainActivity extends AppCompatActivity {
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         switch (item.getItemId()) {
-            case R.id.opPostOferta:
+            case R.id.opcionPostularseOferta:
                 Toast.makeText(this, "Te postulaste a esta oferta", Toast.LENGTH_SHORT).show();
                 return true;
-            case R.id.OpDescOferta:
+            case R.id.opcionDescartarOferta:
                 Toast.makeText(this, "Descartaste esta oferta", Toast.LENGTH_SHORT).show();
                 return true;
             default:
                 return super.onContextItemSelected(item);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == AltaOferta.ALTA_OFERTA_REQUEST) {
+            if(resultCode == RESULT_OK) {
+                Toast.makeText(MainActivity.this, "OFERTA CREADA", Toast.LENGTH_SHORT).show();
+            } else if(resultCode == RESULT_CANCELED) {
+                Toast.makeText(MainActivity.this, "OFERTA CANCELADA", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 }

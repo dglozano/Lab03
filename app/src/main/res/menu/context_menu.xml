@@ -3,9 +3,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/opPostOferta"
+        android:id="@+id/opcionPostularseOferta"
         android:title="@string/postular" />
     <item
-        android:id="@+id/OpDescOferta"
+        android:id="@+id/opcionDescartarOferta"
         android:title="@string/descartar" />
 </menu>
