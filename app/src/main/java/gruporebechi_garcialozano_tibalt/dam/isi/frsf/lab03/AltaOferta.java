@@ -36,6 +36,24 @@ public class AltaOferta extends AppCompatActivity {
 
         intentOrigen = getIntent();
 
+        findViewsById();
+        setAdapters();
+        setListeners();
+    }
+
+    private void setListeners() {
+        guardarBtn.setOnClickListener(new GuardarBtnListener());
+        cancelarBtn.setOnClickListener(new CancelarBtnListener());
+    }
+
+    private void setAdapters() {
+        categoriasSpinner.setAdapter(new ArrayAdapter(this, android.R.layout.simple_spinner_item, Categoria.CATEGORIAS_MOCK));
+        ArrayAdapter<CharSequence> spinnerMonedaAdapter = ArrayAdapter.createFromResource(this,
+                R.array.monedas, android.R.layout.simple_spinner_item);
+        monedaSpinner.setAdapter(spinnerMonedaAdapter);
+    }
+
+    private void findViewsById() {
         nombreOfertaEditText = (EditText) findViewById(R.id.etNombreOferta);
         horasEstimadasEditText = (EditText) findViewById(R.id.etHorasTrabajo);
         maxPrecioHoraEditText = (EditText) findViewById(R.id.etMaxPrecioHora);
@@ -45,14 +63,6 @@ public class AltaOferta extends AppCompatActivity {
         guardarBtn = (Button) findViewById(R.id.btnGuardar);
         categoriasSpinner = (Spinner) findViewById(R.id.spinnerCategoria);
         monedaSpinner = (Spinner) findViewById(R.id.spinnerMoneda);
-
-        categoriasSpinner.setAdapter(new ArrayAdapter(this, android.R.layout.simple_spinner_item, Categoria.CATEGORIAS_MOCK));
-        ArrayAdapter<CharSequence> spinnerMonedaAdapter = ArrayAdapter.createFromResource(this,
-                R.array.monedas, android.R.layout.simple_spinner_item);
-        monedaSpinner.setAdapter(spinnerMonedaAdapter);
-
-        guardarBtn.setOnClickListener(new GuardarBtnListener());
-        cancelarBtn.setOnClickListener(new CancelarBtnListener());
     }
 
     private class CancelarBtnListener implements View.OnClickListener {
@@ -93,5 +103,7 @@ public class AltaOferta extends AppCompatActivity {
         monedaSpinner.setSelection(savedInstanceState.getInt("moneda"));
         requiereInglesCheckBox.setChecked(savedInstanceState.getBoolean("requiere-ingles"));
         fechaEntregaEditText.setText(savedInstanceState.getString("fecha-estimada"));
+
+        nombreOfertaEditText.requestFocus();
     }
 }
