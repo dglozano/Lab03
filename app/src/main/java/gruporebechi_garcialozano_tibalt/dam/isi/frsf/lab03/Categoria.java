@@ -87,4 +87,9 @@ public class Categoria implements Parcelable{
         parcel.writeString(descripcion);
         parcel.writeTypedList(trabajos);
     }
+
+    @Override
+    public String toString(){
+        return this.descripcion;
+    }
 }
