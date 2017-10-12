@@ -11,7 +11,7 @@ import java.util.Random;
 /**
  * Created by mdominguez on 07/09/16.
  */
-public class Trabajo implements Parcelable {
+public class Trabajo implements Parcelable, Serializable {
 
     private Integer id;
     private String descripcion;
