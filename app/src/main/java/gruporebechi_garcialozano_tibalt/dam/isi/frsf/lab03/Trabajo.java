@@ -11,7 +11,7 @@ import java.util.Random;
 /**
  * Created by mdominguez on 07/09/16.
  */
-public class Trabajo implements Parcelable, Serializable {
+public class Trabajo implements Parcelable {
 
     private Integer id;
     private String descripcion;
@@ -53,6 +53,12 @@ public class Trabajo implements Parcelable, Serializable {
     protected Trabajo(Parcel in) {
         descripcion = in.readString();
         categoria = in.readParcelable(Categoria.class.getClassLoader());
+        id = in.readInt();
+        horasPresupuestadas = in.readInt();
+        monedaPago = in.readInt();
+        precioMaximoHora = in.readDouble();
+        fechaEntrega = new Date(in.readLong() * 1000);
+        requiereIngles = in.readByte() != 0;
     }
 
     public static final Creator<Trabajo> CREATOR = new Creator<Trabajo>() {

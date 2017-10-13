@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -11,16 +12,22 @@ import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 public class AltaOferta extends AppCompatActivity {
 
     public static final int ALTA_OFERTA_REQUEST = 1;
+    public static final String MY_DATE_FORMAT = "dd/MM/yyyy";
+    public static final String TRABAJO_EXTRA_KEY = "trabajo-key";
+
+    private Trabajo trabajo;
 
     private Intent intentOrigen;
-    private Trabajo trabajo;
 
     private EditText nombreOfertaEditText ;
     private EditText horasEstimadasEditText;
@@ -53,7 +60,7 @@ public class AltaOferta extends AppCompatActivity {
             myCalendar.set(Calendar.MONTH, month);
             myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            SimpleDateFormat sdf = new SimpleDateFormat(AltaOferta.MY_DATE_FORMAT);
             fechaEntregaEditText.setText(sdf.format(myCalendar.getTime()));
         }
     }
@@ -102,9 +109,38 @@ public class AltaOferta extends AppCompatActivity {
     private class GuardarBtnListener implements View.OnClickListener {
         @Override
         public void onClick(View view) {
-            setResult(RESULT_OK, intentOrigen);
-            finish();
+            try{
+                validarDatosIngresados();
+                cargarDatosIngresados();
+                intentOrigen.putExtra(AltaOferta.TRABAJO_EXTRA_KEY, trabajo);
+                setResult(RESULT_OK, intentOrigen);
+                finish();
+            } catch (BadInputException error) {
+                Toast.makeText(AltaOferta.this, error.getMsg(), Toast.LENGTH_SHORT).show();
+            } catch (ParseException parseError) {
+                Toast.makeText(AltaOferta.this, getResources().getString(R.string.formato_fecha_incorrecto), Toast.LENGTH_SHORT).show();
+            }
         }
+    }
+
+    private void validarDatosIngresados() throws BadInputException {
+        if(nombreOfertaEditText.getText().toString().isEmpty()
+                || horasEstimadasEditText.getText().toString().isEmpty()
+                || maxPrecioHoraEditText.getText().toString().isEmpty()
+                || fechaEntregaEditText.getText().toString().isEmpty())
+            throw new BadInputException(getResources().getString(R.string.error_empty));
+    }
+
+    private void cargarDatosIngresados() throws ParseException{
+        trabajo = new Trabajo(0, nombreOfertaEditText.getText().toString());
+        trabajo.setCategoria((Categoria)categoriasSpinner.getSelectedItem());
+        trabajo.setHorasPresupuestadas(Integer.parseInt(horasEstimadasEditText.getText().toString()));
+        trabajo.setPrecioMaximoHora(Double.parseDouble(maxPrecioHoraEditText.getText().toString()));
+        trabajo.setMonedaPago(monedaSpinner.getSelectedItemPosition() - 1);
+        trabajo.setRequiereIngles(requiereInglesCheckBox.isChecked());
+        SimpleDateFormat sdf = new SimpleDateFormat(AltaOferta.MY_DATE_FORMAT);
+        Date fechaEntrega = sdf.parse(fechaEntregaEditText.getText().toString());
+        trabajo.setFechaEntrega(fechaEntrega);
     }
 
     @Override

@@ -6,6 +6,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuInflater;
 import android.view.View;
@@ -20,6 +21,9 @@ import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
+    private List<Trabajo> listaTrabajos;
+    private OfertasListAdapter ofertasListAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,13 +41,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        List<Trabajo> listaTrabajos = new ArrayList<>(Arrays.asList(Trabajo.TRABAJOS_MOCK));
+        listaTrabajos = new ArrayList<>(Arrays.asList(Trabajo.TRABAJOS_MOCK));
 
         ListView lvOfertasTrabajo = (ListView) findViewById(R.id.lvOfertasTrabajo);
 
         registerForContextMenu(lvOfertasTrabajo);
 
-        OfertasListAdapter ofertasListAdapter = new OfertasListAdapter(this, listaTrabajos);
+        ofertasListAdapter = new OfertasListAdapter(this, listaTrabajos);
         lvOfertasTrabajo.setAdapter(ofertasListAdapter);
     }
 
@@ -96,9 +100,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == AltaOferta.ALTA_OFERTA_REQUEST) {
             if(resultCode == RESULT_OK) {
-                Toast.makeText(MainActivity.this, "OFERTA CREADA", Toast.LENGTH_SHORT).show();
+                Trabajo nuevaOferta = data.getParcelableExtra(AltaOferta.TRABAJO_EXTRA_KEY);
+
+                listaTrabajos.add(nuevaOferta);
+                ofertasListAdapter.notifyDataSetChanged();
             } else if(resultCode == RESULT_CANCELED) {
-                Toast.makeText(MainActivity.this, "OFERTA CANCELADA", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, getResources().getString(R.string.alta_oferta_cancelada), Toast.LENGTH_SHORT).show();
             }
         }
     }
