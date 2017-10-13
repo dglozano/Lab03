@@ -1,9 +1,13 @@
 package gruporebechi_garcialozano_tibalt.dam.isi.frsf.lab03;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -86,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         switch (item.getItemId()) {
             case R.id.opcionPostularseOferta:
+                sendNotification("La postulación se ha realizado de manera exitosa","Postulación exitosa");
                 Toast.makeText(this, "Te postulaste a esta oferta", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.opcionDescartarOferta:
@@ -108,5 +113,27 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, getResources().getString(R.string.alta_oferta_cancelada), Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    private void sendNotification(final String message, final String title) {
+        //FIXME no muestra la notificacion
+        Thread hilo = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String ns = Context.NOTIFICATION_SERVICE;
+                Context ctx = getApplicationContext();
+                NotificationManager nm = (NotificationManager) ctx.getSystemService(ns);
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                PendingIntent pi = PendingIntent.getActivity(ctx, 0, intent, 0);
+                NotificationCompat.Builder mBuilder =
+                        new NotificationCompat.Builder(ctx.getApplicationContext())
+                                .setSmallIcon(R.mipmap.ic_launcher)
+                                .setContentIntent(pi)
+                                .setContentTitle(title)
+                                .setContentText(message);
+                nm.notify(1, mBuilder.build());
+            }
+        });
+        hilo.run();
     }
 }
