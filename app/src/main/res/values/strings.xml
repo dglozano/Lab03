@@ -18,4 +18,7 @@
     <string name="ingrese_fecha_maxima">Ingrese fecha máx. de entrega</string>
     <string name="guardar">Guardar</string>
     <string name="cancelar">Cancelar</string>
+    <string name="alta_oferta_cancelada">Alta de oferta cancelada</string>
+    <string name="error_empty">Debe completar todos los campos de la oferta</string>
+    <string name="formato_fecha_incorrecto">El formato de la fecha debe ser dd/mm/yyyy</string>
 </resources>
