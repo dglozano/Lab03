@@ -1,14 +1,9 @@
-package gruporebechi_garcialozano_tibalt.dam.isi.frsf.lab03;
+package gruporebechi_garcialozano_tibalt.dam.isi.frsf.lab03.activities;
 
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.ContextMenu;
 import android.view.MenuInflater;
@@ -22,6 +17,10 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import gruporebechi_garcialozano_tibalt.dam.isi.frsf.lab03.OfertasListAdapter;
+import gruporebechi_garcialozano_tibalt.dam.isi.frsf.lab03.R;
+import gruporebechi_garcialozano_tibalt.dam.isi.frsf.lab03.model.Trabajo;
 
 public class MainActivity extends AppCompatActivity {
 

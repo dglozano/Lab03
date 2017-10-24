@@ -1,4 +1,4 @@
-package gruporebechi_garcialozano_tibalt.dam.isi.frsf.lab03;
+package gruporebechi_garcialozano_tibalt.dam.isi.frsf.lab03.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
