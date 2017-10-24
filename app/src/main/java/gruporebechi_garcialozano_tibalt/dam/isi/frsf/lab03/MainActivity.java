@@ -1,12 +1,15 @@
 package gruporebechi_garcialozano_tibalt.dam.isi.frsf.lab03;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuInflater;
 import android.view.View;
@@ -84,12 +87,19 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        String descripcionOfertaSeleccionada = listaTrabajos.get(info.position).toString();
         switch (item.getItemId()) {
             case R.id.opcionPostularseOferta:
-                Toast.makeText(this, "Te postulaste a esta oferta", Toast.LENGTH_SHORT).show();
+                String nombreIntent = "gruporebechi_garcialozano_tibalt.dam.isi.frsf.lab03";
+                Intent broadcastIntent = new Intent(nombreIntent);
+                broadcastIntent.putExtra("message", descripcionOfertaSeleccionada);
+                broadcastIntent.putExtra("title", "Postulacion exitosa");
+                sendBroadcast(broadcastIntent);
                 return true;
             case R.id.opcionDescartarOferta:
-                Toast.makeText(this, "Descartaste esta oferta", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Descartaste la oferta " + descripcionOfertaSeleccionada, Toast.LENGTH_SHORT).show();
+                listaTrabajos.remove(info.position);
+                ofertasListAdapter.notifyDataSetChanged();
                 return true;
             default:
                 return super.onContextItemSelected(item);
@@ -101,7 +111,6 @@ public class MainActivity extends AppCompatActivity {
         if(requestCode == AltaOferta.ALTA_OFERTA_REQUEST) {
             if(resultCode == RESULT_OK) {
                 Trabajo nuevaOferta = data.getParcelableExtra(AltaOferta.TRABAJO_EXTRA_KEY);
-
                 listaTrabajos.add(nuevaOferta);
                 ofertasListAdapter.notifyDataSetChanged();
             } else if(resultCode == RESULT_CANCELED) {
