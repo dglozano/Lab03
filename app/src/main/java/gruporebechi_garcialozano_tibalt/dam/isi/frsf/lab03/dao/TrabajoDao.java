@@ -1,5 +1,7 @@
 package gruporebechi_garcialozano_tibalt.dam.isi.frsf.lab03.dao;
 
+import org.json.JSONException;
+
 import java.util.List;
 
 import gruporebechi_garcialozano_tibalt.dam.isi.frsf.lab03.model.Categoria;

@@ -20,6 +20,9 @@ import java.util.List;
 
 import gruporebechi_garcialozano_tibalt.dam.isi.frsf.lab03.OfertasListAdapter;
 import gruporebechi_garcialozano_tibalt.dam.isi.frsf.lab03.R;
+import gruporebechi_garcialozano_tibalt.dam.isi.frsf.lab03.dao.TrabajoDao;
+import gruporebechi_garcialozano_tibalt.dam.isi.frsf.lab03.dao.TrabajoDaoJson;
+import gruporebechi_garcialozano_tibalt.dam.isi.frsf.lab03.model.Categoria;
 import gruporebechi_garcialozano_tibalt.dam.isi.frsf.lab03.model.Trabajo;
 
 public class MainActivity extends AppCompatActivity {
