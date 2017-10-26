@@ -20,6 +20,16 @@
             </intent-filter>
         </activity>
         <activity android:name=".AltaOferta"></activity>
+        <receiver
+            android:name=".NotificationReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="gruporebechi_garcialozano_tibalt.dam.isi.frsf.lab03"/>
+            </intent-filter>
+        </receiver>
     </application>
+
+
 
 </manifest>

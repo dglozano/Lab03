@@ -1,7 +1,6 @@
 package gruporebechi_garcialozano_tibalt.dam.isi.frsf.lab03;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
