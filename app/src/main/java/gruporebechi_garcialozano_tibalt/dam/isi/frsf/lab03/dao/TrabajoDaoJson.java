@@ -31,6 +31,8 @@ public class TrabajoDaoJson implements TrabajoDao {
     private static final String JSON_CATEGORIAS_FILE_NAME = "categorias.json";
     private static final String JSON_TRABAJOS_FILENAME = "trabajos.json";
     private static final String DATE_FORMAT = "dd/mm/yyyy";
+    private static final Integer CREAR = 0;
+    private static final Integer BORRAR = 1;
 
     private static String JSON_CATEGORIAS_STRING = "{"
             + "\"categorias\": [ "
@@ -45,6 +47,10 @@ public class TrabajoDaoJson implements TrabajoDao {
     private List<Categoria> categorias;
     private Context context;
 
+    /**
+     * Si no existe un archivo con las categorias, lo crea y escribi las categorias existentes.
+     * @param ctx
+     */
     public TrabajoDaoJson(Context ctx) {
         context = ctx;
         categorias = new ArrayList<>();
@@ -90,6 +96,45 @@ public class TrabajoDaoJson implements TrabajoDao {
         return sb.toString();
     }
 
+    /**
+     * Por cada Trabajo en la lista de trabajos recibida por parametro, crea un nuevo JSONObject
+     * y le setea los pares <clave,valor> con los atributos del trabajo y lo va agregando
+     * al JSONArray que finalmente retornara.
+     * @param trabajos un List<Trabajo> de trabajos que se formateara a JSONArray
+     * @return JSONArray con la lista de trabajos
+     */
+    private JSONArray trabajosToJson(List<Trabajo> trabajos) throws JSONException {
+        // Creo el JSONObject con el JSONArray de trabajos a escribir
+        JSONArray trabajosJsonArray = new JSONArray();
+        for(Trabajo t: trabajos){
+            JSONObject trabajoJson = new JSONObject();
+            trabajoJson.put("id", t.getId());
+            trabajoJson.put("descripcion", t.getDescripcion());
+            trabajoJson.put("horas-presupuestadas", t.getHorasPresupuestadas());
+            trabajoJson.put("precio-max-hora", t.getPrecioMaximoHora());
+            trabajoJson.put("moneda", t.getMonedaPago());
+            trabajoJson.put("requiere-ingles", t.getRequiereIngles());
+            // Formateo el Date a dd/mm/yyyy
+            SimpleDateFormat sdf = new SimpleDateFormat(TrabajoDaoJson.DATE_FORMAT);
+            trabajoJson.put("fecha-entrega", sdf.format(t.getFechaEntrega()));
+            // Creo el JSONObject Categoria para añadir al trabajo
+            JSONObject categoria = new JSONObject();
+            categoria.put("id", t.getCategoria().getId());
+            categoria.put("descripcion", t.getCategoria().getDescripcion());
+            trabajoJson.put("categoria", categoria);
+            // Y lo agrego al array
+            trabajosJsonArray.put(trabajoJson);
+        }
+        return trabajosJsonArray;
+    }
+
+    /**
+     * Las categorias son siempre las mismas, pero se almacenan en un JSON. La primera vez que se
+     * llama a la funcion, leera el archivo, parseara el JSON obtenido a la lista y la retornara.
+     * Pero, ademas, la deja guardada en memoria en la variable de instancia this.categorias para
+     * no tener que volver a leer el archivo si se vuelve a llamar al metodo.
+     * @return List<Categoria> Las categorias defenidas. Son fijas.
+     */
     @Override
     public List<Categoria> listaCategoria() {
         // Si la lista de categorias, que es siempre fija, no fue leida aun del archivo
@@ -120,41 +165,33 @@ public class TrabajoDaoJson implements TrabajoDao {
         return this.categorias;
     }
 
-    @Override
-    public void crearOferta(Trabajo p) {
+    /**
+     * Obtiene la lista de trabajos almacenada actualmente en el archivo, parsea el JSONArray
+     * obtenido a un List<Trabajo>, añade o elimina el Trabajo p y finalmente convierte
+     * el List<Trabajo> actualizado a un JSONArray para volverlo a escribir.
+     * @param p Trabajo a crear
+     * @param MODO si el MODO es CREAR agrega el trabajo p a la lista; si es BORRAR, lo elimina.
+     */
+    private void actualizarOferta(Trabajo p, Integer MODO) {
         try {
             // Abro un flujo de salida al archivo
             FileOutputStream mOutput = context.openFileOutput(JSON_TRABAJOS_FILENAME, Activity.MODE_PRIVATE);
             // Obtengo la lista de trabajos que hay actualmente en el archivo
-            List<Trabajo> trabajosAntes = this.listaTrabajos();
-            // Le agrego el nuevo
-            trabajosAntes.add(p);
-            /*StringBuilder sb = new StringBuilder();
-            sb.append("{ trabajos : [");*/
-            JSONArray trabajosJsonArray = new JSONArray();
-            for(Trabajo t: trabajosAntes){
-                JSONObject trabajoJson = new JSONObject();
-                trabajoJson.put("id", t.getId());
-                trabajoJson.put("descripcion", t.getDescripcion());
-                trabajoJson.put("horas-presupuestadas", t.getHorasPresupuestadas());
-                trabajoJson.put("precio-max-hora", t.getPrecioMaximoHora());
-                trabajoJson.put("moneda", t.getMonedaPago());
-                trabajoJson.put("requiere-ingles", t.getRequiereIngles());
-
-                SimpleDateFormat sdf = new SimpleDateFormat(TrabajoDaoJson.DATE_FORMAT);
-                trabajoJson.put("fecha-entrega", sdf.format(t.getFechaEntrega()));
-
-                JSONObject categoria = new JSONObject();
-                categoria.put("id", t.getCategoria().getId());
-                categoria.put("descripcion", t.getCategoria().getDescripcion());
-                trabajoJson.put("categoria", categoria);
-
-                trabajosJsonArray.put(trabajoJson);
-            }
-            JSONObject trabajos = new JSONObject();
-            trabajos.put("trabajos", trabajosJsonArray);
-
-            mOutput.write(trabajos.toString().getBytes());
+            List<Trabajo> trabajos = this.listaTrabajos();
+            // Si el MODO es CREAR lo agrega a la lista; si es BORRAR Lo elimina.
+            if(MODO == TrabajoDaoJson.CREAR)
+                trabajos.add(p);
+            else if(MODO == TrabajoDaoJson.BORRAR)
+                trabajos.remove(p);
+            // Parseo el List<Trabajo> a un JSONArray
+            JSONArray trabajosJsonArray = trabajosToJson(trabajos);
+            // Agrego el Array al Object, ya que lo que escribo es del tipo
+            // { "trabajos": [ {...}, {...}, {...} ] }
+            // Podria haberlo hecho directamente [ {...}, {...}, {...} ], pero es lo mismo.
+            JSONObject trabajosObject = new JSONObject();
+            trabajosObject.put("trabajos", trabajosJsonArray);
+            // Lo escribo al archivo.
+            mOutput.write(trabajosObject.toString().getBytes());
             mOutput.flush();
             mOutput.close();
         } catch (FileNotFoundException e) {
@@ -166,6 +203,31 @@ public class TrabajoDaoJson implements TrabajoDao {
         }
     }
 
+    /**
+     * Agrega el nuevo trabajo p al JSON almacenado en el archivo
+     * @param p Trabajo a crear
+     */
+    @Override
+    public void crearOferta(Trabajo p){
+        actualizarOferta(p, TrabajoDaoJson.CREAR);
+    }
+
+    /**
+     * Borra el trabajo p del JSON almacenado en el archivo
+     * @param p Trabajo a borrar
+     */
+    @Override
+    public void borrarOferta(Trabajo p){
+        actualizarOferta(p, TrabajoDaoJson.BORRAR);
+    }
+
+    /**
+     * Lee el archivo JSON de trabajos y, por cada JSONObject que representa a un Trabajo
+     * en el JSONArray, crea una nueva instancia de Trabajo, obtiene del JSON almacenados los
+     * valores almacenados en forma <clave, valor> y los setea al objeto trabajo.
+     * Luego, añade el Trabajo ya inicializado a la lista que se retornara de List<Trabajo>
+     * @return List<Trabajo> parseada del JSON guardado en el archivo
+     */
     @Override
     public List<Trabajo> listaTrabajos() {
         // Creo la lista de trabajos que va a retornar

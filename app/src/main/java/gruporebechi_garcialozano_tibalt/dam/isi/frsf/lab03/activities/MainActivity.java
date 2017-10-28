@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
 
     private List<Trabajo> listaTrabajos;
     private OfertasListAdapter ofertasListAdapter;
+    private TrabajoDao trabajoDao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +47,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        listaTrabajos = new ArrayList<>(Arrays.asList(Trabajo.TRABAJOS_MOCK));
+        trabajoDao = new TrabajoDaoJson(this);
+        listaTrabajos = trabajoDao.listaTrabajos();
 
         ListView lvOfertasTrabajo = (ListView) findViewById(R.id.lvOfertasTrabajo);
 
@@ -100,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             case R.id.opcionDescartarOferta:
                 Toast.makeText(this, "Descartaste la oferta " + descripcionOfertaSeleccionada, Toast.LENGTH_SHORT).show();
-                listaTrabajos.remove(info.position);
+                trabajoDao.borrarOferta(listaTrabajos.remove(info.position));
                 ofertasListAdapter.notifyDataSetChanged();
                 return true;
             default:
@@ -114,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
             if(resultCode == RESULT_OK) {
                 Trabajo nuevaOferta = data.getParcelableExtra(AltaOferta.TRABAJO_EXTRA_KEY);
                 listaTrabajos.add(nuevaOferta);
+                trabajoDao.crearOferta(nuevaOferta);
                 ofertasListAdapter.notifyDataSetChanged();
             } else if(resultCode == RESULT_CANCELED) {
                 Toast.makeText(MainActivity.this, getResources().getString(R.string.alta_oferta_cancelada), Toast.LENGTH_SHORT).show();

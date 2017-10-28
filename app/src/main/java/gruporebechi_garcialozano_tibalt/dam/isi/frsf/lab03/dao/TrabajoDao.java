@@ -25,6 +25,12 @@ public interface TrabajoDao {
     void crearOferta(Trabajo p);
 
     /**
+     * Elimina el trabajo
+     * @param p Trabajo a eliminar
+     */
+    void borrarOferta(Trabajo p);
+
+    /**
      * Retorna la lista de trabajos
      * @return List<Trabajo>
      */
