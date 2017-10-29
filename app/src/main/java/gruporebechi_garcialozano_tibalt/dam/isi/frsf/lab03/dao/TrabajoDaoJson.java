@@ -18,7 +18,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.function.Predicate;
 
 import gruporebechi_garcialozano_tibalt.dam.isi.frsf.lab03.model.Categoria;
 import gruporebechi_garcialozano_tibalt.dam.isi.frsf.lab03.model.Trabajo;
@@ -31,7 +30,7 @@ public class TrabajoDaoJson implements TrabajoDao {
 
     private static final String JSON_CATEGORIAS_FILE_NAME = "categorias.json";
     private static final String JSON_TRABAJOS_FILENAME = "trabajos.json";
-    private static final String DATE_FORMAT = "dd/mm/yyyy";
+    private static final String DATE_FORMAT = "dd/MM/yyyy";
     private static final Integer CREAR = 0;
     private static final Integer BORRAR = 1;
 
@@ -114,7 +113,7 @@ public class TrabajoDaoJson implements TrabajoDao {
             trabajoJson.put("precio-max-hora", t.getPrecioMaximoHora());
             trabajoJson.put("moneda", t.getMonedaPago());
             trabajoJson.put("requiere-ingles", t.getRequiereIngles());
-            // Formateo el Date a dd/mm/yyyy
+            // Formateo el Date a dd/MM/yyyy
             SimpleDateFormat sdf = new SimpleDateFormat(TrabajoDaoJson.DATE_FORMAT);
             trabajoJson.put("fecha-entrega", sdf.format(t.getFechaEntrega()));
             // Creo el JSONObject Categoria para añadir al trabajo

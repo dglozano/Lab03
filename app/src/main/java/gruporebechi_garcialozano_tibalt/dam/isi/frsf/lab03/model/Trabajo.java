@@ -57,7 +57,7 @@ public class Trabajo implements Parcelable {
         horasPresupuestadas = in.readInt();
         monedaPago = in.readInt();
         precioMaximoHora = in.readDouble();
-        fechaEntrega = new Date(in.readLong() * 1000);
+        fechaEntrega = new Date(in.readLong());
         requiereIngles = in.readByte() != 0;
     }
 
