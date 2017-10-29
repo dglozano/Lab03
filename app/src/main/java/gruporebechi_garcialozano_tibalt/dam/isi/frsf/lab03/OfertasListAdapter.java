@@ -31,7 +31,7 @@ public class OfertasListAdapter extends BaseAdapter {
         this.listaTrabajos = listaTrabajos;
     }
 
-    private SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/mm/yyyy");
+    private SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy");
     private NumberFormat formatoNumero = new DecimalFormat("#0.00");
 
     @Override

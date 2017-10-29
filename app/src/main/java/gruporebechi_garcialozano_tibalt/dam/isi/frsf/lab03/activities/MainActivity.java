@@ -115,8 +115,9 @@ public class MainActivity extends AppCompatActivity {
         if(requestCode == AltaOferta.ALTA_OFERTA_REQUEST) {
             if(resultCode == RESULT_OK) {
                 Trabajo nuevaOferta = data.getParcelableExtra(AltaOferta.TRABAJO_EXTRA_KEY);
-                listaTrabajos.add(nuevaOferta);
                 trabajoDao.crearOferta(nuevaOferta);
+                listaTrabajos.clear();
+                listaTrabajos.addAll(trabajoDao.listaTrabajos());
                 ofertasListAdapter.notifyDataSetChanged();
             } else if(resultCode == RESULT_CANCELED) {
                 Toast.makeText(MainActivity.this, getResources().getString(R.string.alta_oferta_cancelada), Toast.LENGTH_SHORT).show();
