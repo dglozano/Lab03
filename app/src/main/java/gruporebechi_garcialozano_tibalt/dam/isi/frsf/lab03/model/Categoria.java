@@ -25,6 +25,7 @@ public class Categoria implements Parcelable{
     }
 
     protected Categoria(Parcel in) {
+        id = in.readInt();
         descripcion = in.readString();
         trabajos = in.createTypedArrayList(Trabajo.CREATOR);
     }
@@ -84,6 +85,7 @@ public class Categoria implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(id);
         parcel.writeString(descripcion);
         parcel.writeTypedList(trabajos);
     }

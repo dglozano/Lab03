@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
 
@@ -171,6 +172,8 @@ public class Trabajo implements Parcelable {
         parcel.writeInt(horasPresupuestadas);
         parcel.writeInt(monedaPago);
         parcel.writeDouble(precioMaximoHora);
+        parcel.writeLong(fechaEntrega.getTime());
+        parcel.writeByte((byte) (requiereIngles ? 1 : 0));
     }
 
     @Override

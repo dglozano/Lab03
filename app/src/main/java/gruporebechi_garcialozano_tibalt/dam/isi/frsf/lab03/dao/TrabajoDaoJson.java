@@ -18,6 +18,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Predicate;
 
 import gruporebechi_garcialozano_tibalt.dam.isi.frsf.lab03.model.Categoria;
 import gruporebechi_garcialozano_tibalt.dam.isi.frsf.lab03.model.Trabajo;
@@ -34,16 +35,6 @@ public class TrabajoDaoJson implements TrabajoDao {
     private static final Integer CREAR = 0;
     private static final Integer BORRAR = 1;
 
-    private static String JSON_CATEGORIAS_STRING = "{"
-            + "\"categorias\": [ "
-            + "{\"id\": 1, \"descripcion\": \"Arquitecto\"},"
-            + "{\"id\": 2, \"descripcion\": \"Desarrollador\"},"
-            + "{\"id\": 3, \"descripcion\": \"Tester\"},"
-            + "{\"id\": 4, \"descripcion\": \"Analista\"},"
-            + "{\"id\": 5, \"descripcion\": \"Mobile Developer\"}"
-            + "]"
-            + "}";
-
     private List<Categoria> categorias;
     private Context context;
 
@@ -57,13 +48,22 @@ public class TrabajoDaoJson implements TrabajoDao {
         File archivo = new File(TrabajoDaoJson.JSON_CATEGORIAS_FILE_NAME);
         // Si no existe un archivo de categorias
         if(!archivo.exists()) try {
+            JSONArray categoriasJsonArray = new JSONArray();
+            categoriasJsonArray.put(new JSONObject().put("id", 1).put("descripcion", "Arquitecto"));
+            categoriasJsonArray.put(new JSONObject().put("id", 2).put("descripcion", "Desarrollador"));
+            categoriasJsonArray.put(new JSONObject().put("id", 3).put("descripcion", "Tester"));
+            categoriasJsonArray.put(new JSONObject().put("id", 4).put("descripcion", "Analista"));
+            categoriasJsonArray.put(new JSONObject().put("id", 5).put("descripcion", "Mobile Developer"));
+            JSONObject categoriasJson = new JSONObject().put("categorias", categoriasJsonArray);
             // Lo creo y lo abro en MODE PRIVATE por las dudas (sobreescribe lo que haya)
             FileOutputStream mOutput = context.openFileOutput(JSON_CATEGORIAS_FILE_NAME, Activity.MODE_PRIVATE);
             // Y escribo el JSON de categorias como string.
-            mOutput.write(JSON_CATEGORIAS_STRING.getBytes());
+            mOutput.write(categoriasJson.toString().getBytes());
             mOutput.flush();
             mOutput.close();
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
             e.printStackTrace();
         }
     }
@@ -174,15 +174,22 @@ public class TrabajoDaoJson implements TrabajoDao {
      */
     private void actualizarOferta(Trabajo p, Integer MODO) {
         try {
-            // Abro un flujo de salida al archivo
-            FileOutputStream mOutput = context.openFileOutput(JSON_TRABAJOS_FILENAME, Activity.MODE_PRIVATE);
             // Obtengo la lista de trabajos que hay actualmente en el archivo
             List<Trabajo> trabajos = this.listaTrabajos();
+            // Abro un flujo de salida al archivo
+            FileOutputStream mOutput = context.openFileOutput(JSON_TRABAJOS_FILENAME, Activity.MODE_PRIVATE);
             // Si el MODO es CREAR lo agrega a la lista; si es BORRAR Lo elimina.
             if(MODO == TrabajoDaoJson.CREAR)
                 trabajos.add(p);
-            else if(MODO == TrabajoDaoJson.BORRAR)
-                trabajos.remove(p);
+            else if(MODO == TrabajoDaoJson.BORRAR){
+                int index = 0;
+                for(Trabajo t: trabajos) {
+                    if(t.getDescripcion() == p.getDescripcion()){
+                        index = trabajos.indexOf(t);
+                    }
+                }
+                trabajos.remove(index);
+            }
             // Parseo el List<Trabajo> a un JSONArray
             JSONArray trabajosJsonArray = trabajosToJson(trabajos);
             // Agrego el Array al Object, ya que lo que escribo es del tipo
@@ -194,6 +201,8 @@ public class TrabajoDaoJson implements TrabajoDao {
             mOutput.write(trabajosObject.toString().getBytes());
             mOutput.flush();
             mOutput.close();
+            System.out.println(trabajos);
+            System.out.println(trabajosJsonArray.toString(1));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (JSONException e) {
@@ -235,36 +244,38 @@ public class TrabajoDaoJson implements TrabajoDao {
         try {
             // Obtengo el JSON como string
             String trabajosJsonString = readJsonFile(TrabajoDaoJson.JSON_TRABAJOS_FILENAME);
-            // Obtengo el JSON Object a partir del string
-            JSONObject object = (JSONObject) new JSONTokener(trabajosJsonString).nextValue();
-            // Obtengo el arreglo de trabajos que esta en el objeto
-            JSONArray trabajosJsonArray = object.getJSONArray("trabajos");
-            // Por cada JSONObject que representa un trabajo en el arreglo de trabajos
-            for(int i=0; i<trabajosJsonArray.length(); i++) {
-                // Leo el JSONObject que representa al trabajo
-                JSONObject trabajoJson = (JSONObject) trabajosJsonArray.get(i);
-                // Creo una nueva instancia de Trabajo
-                Trabajo nuevoTrabajo = new Trabajo();
-                // Le seteo los atributos que obtengo del JSONObject mediante <clave,valor>
-                nuevoTrabajo.setId(trabajoJson.getInt("id"));
-                nuevoTrabajo.setDescripcion(trabajoJson.getString("descripcion"));
-                nuevoTrabajo.setHorasPresupuestadas(trabajoJson.getInt("horas-presupuestadas"));
-                nuevoTrabajo.setPrecioMaximoHora(trabajoJson.getDouble("precio-max-hora"));
-                nuevoTrabajo.setMonedaPago(trabajoJson.getInt("moneda"));
-                nuevoTrabajo.setRequiereIngles(trabajoJson.getBoolean("requiere-ingles"));
-                // Obtengo el json object de la categoria, cargo los datos al objeto categoria y lo pongo al trabajo
-                JSONObject categoriaJson = trabajoJson.getJSONObject("categoria");
-                Categoria categoria = new Categoria();
-                categoria.setId(categoriaJson.getInt("id"));
-                categoria.setDescripcion(categoriaJson.getString("descripcion"));
-                nuevoTrabajo.setCategoria(categoria);
-                // Obtengo el string de la fecha, lo parseo a Date y lo agrego al trabajo
-                SimpleDateFormat sdf = new SimpleDateFormat(TrabajoDaoJson.DATE_FORMAT);
-                String fechaString = trabajoJson.getString("fecha-entrega");
-                Date fechaEntrega = sdf.parse(fechaString);
-                nuevoTrabajo.setFechaEntrega(fechaEntrega);
-                // Y finalmente lo agrego a la lista
-                trabajos.add(nuevoTrabajo);
+            if(!trabajosJsonString.isEmpty()) {
+                // Obtengo el JSON Object a partir del string
+                JSONObject object = (JSONObject) new JSONObject(trabajosJsonString);
+                // Obtengo el arreglo de trabajos que esta en el objeto
+                JSONArray trabajosJsonArray = object.getJSONArray("trabajos");
+                // Por cada JSONObject que representa un trabajo en el arreglo de trabajos
+                for (int i = 0; i < trabajosJsonArray.length(); i++) {
+                    // Leo el JSONObject que representa al trabajo
+                    JSONObject trabajoJson = (JSONObject) trabajosJsonArray.get(i);
+                    // Creo una nueva instancia de Trabajo
+                    Trabajo nuevoTrabajo = new Trabajo();
+                    // Le seteo los atributos que obtengo del JSONObject mediante <clave,valor>
+                    nuevoTrabajo.setId(trabajoJson.getInt("id"));
+                    nuevoTrabajo.setDescripcion(trabajoJson.getString("descripcion"));
+                    nuevoTrabajo.setHorasPresupuestadas(trabajoJson.getInt("horas-presupuestadas"));
+                    nuevoTrabajo.setPrecioMaximoHora(trabajoJson.getDouble("precio-max-hora"));
+                    nuevoTrabajo.setMonedaPago(trabajoJson.getInt("moneda"));
+                    nuevoTrabajo.setRequiereIngles(trabajoJson.getBoolean("requiere-ingles"));
+                    // Obtengo el json object de la categoria, cargo los datos al objeto categoria y lo pongo al trabajo
+                    JSONObject categoriaJson = trabajoJson.getJSONObject("categoria");
+                    Categoria categoria = new Categoria();
+                    categoria.setDescripcion(categoriaJson.getString("descripcion"));
+                    categoria.setId(categoriaJson.getInt("id"));
+                    nuevoTrabajo.setCategoria(categoria);
+                    // Obtengo el string de la fecha, lo parseo a Date y lo agrego al trabajo
+                    SimpleDateFormat sdf = new SimpleDateFormat(TrabajoDaoJson.DATE_FORMAT);
+                    String fechaString = trabajoJson.getString("fecha-entrega");
+                    Date fechaEntrega = sdf.parse(fechaString);
+                    nuevoTrabajo.setFechaEntrega(fechaEntrega);
+                    // Y finalmente lo agrego a la lista
+                    trabajos.add(nuevoTrabajo);
+                }
             }
         } catch (JSONException e) {
             e.printStackTrace();

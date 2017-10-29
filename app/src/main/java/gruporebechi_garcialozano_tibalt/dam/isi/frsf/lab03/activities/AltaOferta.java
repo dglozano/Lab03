@@ -140,7 +140,7 @@ public class AltaOferta extends AppCompatActivity {
         trabajo.setCategoria((Categoria)categoriasSpinner.getSelectedItem());
         trabajo.setHorasPresupuestadas(Integer.parseInt(horasEstimadasEditText.getText().toString()));
         trabajo.setPrecioMaximoHora(Double.parseDouble(maxPrecioHoraEditText.getText().toString()));
-        trabajo.setMonedaPago(monedaSpinner.getSelectedItemPosition() - 1);
+        trabajo.setMonedaPago(monedaSpinner.getSelectedItemPosition() + 1);
         trabajo.setRequiereIngles(requiereInglesCheckBox.isChecked());
         SimpleDateFormat sdf = new SimpleDateFormat(AltaOferta.MY_DATE_FORMAT);
         Date fechaEntrega = sdf.parse(fechaEntregaEditText.getText().toString());
