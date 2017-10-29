@@ -14,6 +14,8 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
+import gruporebechi_garcialozano_tibalt.dam.isi.frsf.lab03.model.Trabajo;
+
 /**
  * Created by diegogarcialozano on 19/09/17.
  */
@@ -29,7 +31,7 @@ public class OfertasListAdapter extends BaseAdapter {
         this.listaTrabajos = listaTrabajos;
     }
 
-    private SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/mm/yyyy");
+    private SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy");
     private NumberFormat formatoNumero = new DecimalFormat("#0.00");
 
     @Override

@@ -1,10 +1,9 @@
-package gruporebechi_garcialozano_tibalt.dam.isi.frsf.lab03;
+package gruporebechi_garcialozano_tibalt.dam.isi.frsf.lab03.activities;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -18,6 +17,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+
+import gruporebechi_garcialozano_tibalt.dam.isi.frsf.lab03.exceptions.BadInputException;
+import gruporebechi_garcialozano_tibalt.dam.isi.frsf.lab03.model.Categoria;
+import gruporebechi_garcialozano_tibalt.dam.isi.frsf.lab03.R;
+import gruporebechi_garcialozano_tibalt.dam.isi.frsf.lab03.model.Trabajo;
 
 public class AltaOferta extends AppCompatActivity {
 
@@ -136,7 +140,7 @@ public class AltaOferta extends AppCompatActivity {
         trabajo.setCategoria((Categoria)categoriasSpinner.getSelectedItem());
         trabajo.setHorasPresupuestadas(Integer.parseInt(horasEstimadasEditText.getText().toString()));
         trabajo.setPrecioMaximoHora(Double.parseDouble(maxPrecioHoraEditText.getText().toString()));
-        trabajo.setMonedaPago(monedaSpinner.getSelectedItemPosition() - 1);
+        trabajo.setMonedaPago(monedaSpinner.getSelectedItemPosition() + 1);
         trabajo.setRequiereIngles(requiereInglesCheckBox.isChecked());
         SimpleDateFormat sdf = new SimpleDateFormat(AltaOferta.MY_DATE_FORMAT);
         Date fechaEntrega = sdf.parse(fechaEntregaEditText.getText().toString());

@@ -1,14 +1,9 @@
-package gruporebechi_garcialozano_tibalt.dam.isi.frsf.lab03;
+package gruporebechi_garcialozano_tibalt.dam.isi.frsf.lab03.activities;
 
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.ContextMenu;
 import android.view.MenuInflater;
@@ -23,10 +18,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import gruporebechi_garcialozano_tibalt.dam.isi.frsf.lab03.OfertasListAdapter;
+import gruporebechi_garcialozano_tibalt.dam.isi.frsf.lab03.R;
+import gruporebechi_garcialozano_tibalt.dam.isi.frsf.lab03.dao.TrabajoDao;
+import gruporebechi_garcialozano_tibalt.dam.isi.frsf.lab03.dao.TrabajoDaoJson;
+import gruporebechi_garcialozano_tibalt.dam.isi.frsf.lab03.dao.TrabajoDaoSQLite;
+import gruporebechi_garcialozano_tibalt.dam.isi.frsf.lab03.model.Categoria;
+import gruporebechi_garcialozano_tibalt.dam.isi.frsf.lab03.model.Trabajo;
+
 public class MainActivity extends AppCompatActivity {
 
     private List<Trabajo> listaTrabajos;
     private OfertasListAdapter ofertasListAdapter;
+    private TrabajoDao trabajoDao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +48,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        listaTrabajos = new ArrayList<>(Arrays.asList(Trabajo.TRABAJOS_MOCK));
+        trabajoDao = new TrabajoDaoSQLite(this);
+        listaTrabajos = trabajoDao.listaTrabajos();
 
         ListView lvOfertasTrabajo = (ListView) findViewById(R.id.lvOfertasTrabajo);
 
@@ -98,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             case R.id.opcionDescartarOferta:
                 Toast.makeText(this, "Descartaste la oferta " + descripcionOfertaSeleccionada, Toast.LENGTH_SHORT).show();
-                listaTrabajos.remove(info.position);
+                trabajoDao.borrarOferta(listaTrabajos.remove(info.position));
                 ofertasListAdapter.notifyDataSetChanged();
                 return true;
             default:
@@ -111,7 +116,13 @@ public class MainActivity extends AppCompatActivity {
         if(requestCode == AltaOferta.ALTA_OFERTA_REQUEST) {
             if(resultCode == RESULT_OK) {
                 Trabajo nuevaOferta = data.getParcelableExtra(AltaOferta.TRABAJO_EXTRA_KEY);
-                listaTrabajos.add(nuevaOferta);
+                // Esto de escribir la nueva oferta en la capa de persistencia y luego volver
+                // a leer todos los trabajos lo hacemos para que no queden insconsisetencias entre
+                // la lista guardada y la lista en memoria. Ademas, porque el ID del trabajo es
+                // seteado cuando es escrito recien.
+                trabajoDao.crearOferta(nuevaOferta);
+                listaTrabajos.clear();
+                listaTrabajos.addAll(trabajoDao.listaTrabajos());
                 ofertasListAdapter.notifyDataSetChanged();
             } else if(resultCode == RESULT_CANCELED) {
                 Toast.makeText(MainActivity.this, getResources().getString(R.string.alta_oferta_cancelada), Toast.LENGTH_SHORT).show();

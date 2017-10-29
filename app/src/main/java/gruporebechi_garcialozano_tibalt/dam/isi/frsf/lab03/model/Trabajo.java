@@ -1,10 +1,10 @@
-package gruporebechi_garcialozano_tibalt.dam.isi.frsf.lab03;
+package gruporebechi_garcialozano_tibalt.dam.isi.frsf.lab03.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
-import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
 
@@ -57,7 +57,7 @@ public class Trabajo implements Parcelable {
         horasPresupuestadas = in.readInt();
         monedaPago = in.readInt();
         precioMaximoHora = in.readDouble();
-        fechaEntrega = new Date(in.readLong() * 1000);
+        fechaEntrega = new Date(in.readLong());
         requiereIngles = in.readByte() != 0;
     }
 
@@ -172,6 +172,8 @@ public class Trabajo implements Parcelable {
         parcel.writeInt(horasPresupuestadas);
         parcel.writeInt(monedaPago);
         parcel.writeDouble(precioMaximoHora);
+        parcel.writeLong(fechaEntrega.getTime());
+        parcel.writeByte((byte) (requiereIngles ? 1 : 0));
     }
 
     @Override
