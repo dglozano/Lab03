@@ -22,6 +22,7 @@ import gruporebechi_garcialozano_tibalt.dam.isi.frsf.lab03.OfertasListAdapter;
 import gruporebechi_garcialozano_tibalt.dam.isi.frsf.lab03.R;
 import gruporebechi_garcialozano_tibalt.dam.isi.frsf.lab03.dao.TrabajoDao;
 import gruporebechi_garcialozano_tibalt.dam.isi.frsf.lab03.dao.TrabajoDaoJson;
+import gruporebechi_garcialozano_tibalt.dam.isi.frsf.lab03.dao.TrabajoDaoSQLite;
 import gruporebechi_garcialozano_tibalt.dam.isi.frsf.lab03.model.Categoria;
 import gruporebechi_garcialozano_tibalt.dam.isi.frsf.lab03.model.Trabajo;
 
@@ -47,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        trabajoDao = new TrabajoDaoJson(this);
+        trabajoDao = new TrabajoDaoSQLite(this);
         listaTrabajos = trabajoDao.listaTrabajos();
 
         ListView lvOfertasTrabajo = (ListView) findViewById(R.id.lvOfertasTrabajo);
@@ -115,6 +116,10 @@ public class MainActivity extends AppCompatActivity {
         if(requestCode == AltaOferta.ALTA_OFERTA_REQUEST) {
             if(resultCode == RESULT_OK) {
                 Trabajo nuevaOferta = data.getParcelableExtra(AltaOferta.TRABAJO_EXTRA_KEY);
+                // Esto de escribir la nueva oferta en la capa de persistencia y luego volver
+                // a leer todos los trabajos lo hacemos para que no queden insconsisetencias entre
+                // la lista guardada y la lista en memoria. Ademas, porque el ID del trabajo es
+                // seteado cuando es escrito recien.
                 trabajoDao.crearOferta(nuevaOferta);
                 listaTrabajos.clear();
                 listaTrabajos.addAll(trabajoDao.listaTrabajos());
